@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+
+<html lang="en" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Madhukosh — Collector Screen &amp; Beekeeper Portal</title>
+<!-- Tailwind CSS CDN with Forms & Container Queries plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            honey: {
+              50: '#FFFBEB',
+              100: '#FEF3C7',
+              200: '#FDE68A',
+              300: '#FCD34D',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
+              800: '#92400E',
+              900: '#78350F',
+              950: '#451A03'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Core Page Styles -->
+<style data-purpose="global-styles">
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FAFAF7;
+      color: #1F2937;
+    }
+    .honeycomb-pattern {
+      background-image: radial-gradient(rgba(217, 119, 6, 0.08) 1.5px, transparent 1.5px), radial-gradient(rgba(217, 119, 6, 0.08) 1.5px, #FAFAF7 1.5px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+  </style>
+<!-- Table & Badge Component Styles -->
+<style data-purpose="custom-badges">
+    .flagged-row {
+      background-color: #FEF2F2 !important;
+      border-left: 4px solid #EF4444;
+    }
+    .flagged-row:hover {
+      background-color: #FEE2E2 !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen honeycomb-pattern antialiased text-slate-800 flex flex-col">
+<!-- BEGIN: MainHeader -->
+<header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-amber-100 shadow-sm" data-purpose="navigation-header">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Brand & Logo -->
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-honey-600 flex items-center justify-center text-white shadow-xs font-bold text-lg">
+    🍯
+  </div>
+<div>
+<span class="text-base font-bold tracking-tight text-slate-900 block leading-tight">Madhukosh</span>
+<span class="text-[10px] font-medium text-honey-700 tracking-wide block">Apiary &amp; Traceability Network</span>
+</div>
+</div>
+<!-- Primary Navigation Tabs -->
+<nav aria-label="Tabs" class="flex space-x-1" data-purpose="main-nav-tabs"><button class="px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 text-honey-700 bg-honey-50 border border-honey-200/80 shadow-xs" id="tab-admin" onclick="switchMainTab('admin')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Admin Dashboard</button><button class="px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100" id="tab-beekeeper" onclick="switchMainTab('beekeeper')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Harvest Logging</button><button class="px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100" id="tab-collector" onclick="switchMainTab('collector')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Cluster Collector</button><button class="px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100" id="tab-verification" onclick="switchMainTab('verification')"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Batch Verification</button></nav>
+<!-- Right User / Status Pill -->
+<div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-amber-50/70 border border-amber-200/80 px-3 py-1.5 rounded-full">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+</div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContentContainer -->
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+<!-- BEGIN: CollectorScreenSection (Contains the two panels: Register beekeeper and Add a hive) -->
+<section class="space-y-6 hidden" data-purpose="collector-screen-view" id="section-collector">
+<div class="border-b border-amber-200/80 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 tracking-tight">Madhukosh — Collector Screen</h2>
+<p class="text-sm text-slate-500 mt-0.5">Register beekeepers and provision smart hives for verified honey extraction.</p>
+</div>
+<div class="flex items-center gap-2">
+</div>
+</div>
+<!-- 2 Modular Form Cards Grid for Collector Screen -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+<!-- Card 1: Register Beekeeper -->
+<article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 flex flex-col justify-between" data-purpose="register-beekeeper-form">
+<div>
+<div class="flex items-center gap-3.5 mb-6">
+<span class="w-9 h-9 rounded-full bg-honey-100 text-honey-800 font-bold flex items-center justify-center text-sm border border-honey-300">1</span>
+<div>
+<h3 class="font-bold text-slate-900 text-lg">Register beekeeper</h3>
+<p class="text-xs text-slate-400">Onboard apiary partner</p>
+</div>
+</div>
+<form class="space-y-4" id="form-register-beekeeper" onsubmit="handleRegisterBeekeeper(event)">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="bk-name">Name</label>
+<input class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800 placeholder-slate-400" id="bk-name" placeholder="e.g. Ramesh Patil" required="" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="bk-phone">Phone</label>
+<input class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800 placeholder-slate-400" id="bk-phone" placeholder="+91 98220 12345" required="" type="tel"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="bk-region">Region</label>
+<input class="w-full text-xs rounded-lg border-slate-300 bg-amber-50/30 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 font-medium text-slate-800" id="bk-region" type="text" value="Mahabaleshwar"/>
+</div>
+<div class="pt-3">
+<button class="w-full bg-[#B45309] hover:bg-[#92400E] text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  Register beekeeper
+</button>
+</div>
+</form>
+</div>
+<!-- Success Alert Container -->
+<div class="mt-4 hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium" id="bk-status-box">
+            Beekeeper registered successfully!
+</div>
+</article>
+<!-- Card 2: Add a Hive -->
+<article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 flex flex-col justify-between" data-purpose="add-hive-form">
+<div>
+<div class="flex items-center gap-3.5 mb-6">
+<span class="w-9 h-9 rounded-full bg-honey-100 text-honey-800 font-bold flex items-center justify-center text-sm border border-honey-300">2</span>
+<div>
+<h3 class="font-bold text-slate-900 text-lg">Add a hive</h3>
+<p class="text-xs text-slate-400">Generate traceable box tag</p>
+</div>
+</div>
+<form class="space-y-4" id="form-add-hive" onsubmit="handleAddHive(event)">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="hive-beekeeper-select">Beekeeper</label>
+<select class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800" id="hive-beekeeper-select">
+<option value="bk-1">Ramesh Patil (#BK-101)</option>
+<option value="bk-2">Sunita Deshmukh (#BK-102)</option>
+<option value="bk-3">Kiran Shinde (#BK-103)</option>
+</select>
+</div>
+<!-- Auto Generated Hive Tag Badge Preview -->
+<div class="p-3.5 bg-amber-50/60 rounded-xl border border-amber-200/80 space-y-1">
+<span class="text-[10px] font-semibold text-amber-900 block uppercase tracking-wider">NEXT AUTO ID:</span>
+<span class="font-mono text-sm font-bold text-[#B45309]" id="next-hive-id-preview">HIVE-043</span>
+</div>
+<div class="pt-3">
+<button class="w-full bg-[#B45309] hover:bg-[#92400E] text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  + Add hive (ID auto-generated)
+</button>
+</div>
+</form>
+</div>
+<!-- Status Message banner -->
+<div class="mt-4 hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium" id="hive-status-box">
+            Hive registered successfully!
+</div>
+</article>
+<article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 flex flex-col justify-between" data-purpose="verify-hive-card"><div><div class="flex items-center gap-3.5 mb-6"><span class="w-9 h-9 rounded-full bg-honey-100 text-honey-800 font-bold flex items-center justify-center text-sm border border-honey-300">3</span><div><h3 class="font-bold text-slate-900 text-lg">Verify a hive</h3><p class="text-xs text-slate-400">Field cluster verification</p></div></div><form class="space-y-4" onsubmit="event.preventDefault(); document.getElementById('verify-hive-status-box').classList.remove('hidden');"><div class="space-y-1.5"><div class="flex items-center justify-between"><label class="block text-xs font-semibold text-slate-700" for="verify-hive-select">Detect a hive</label></div><select class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800" id="verify-hive-select"><option value="HIVE-043">HIVE-043 (Mahabaleshwar Zone - Active)</option><option value="HIVE-042">HIVE-042 (Mahabaleshwar Plateau)</option><option value="HIVE-089">HIVE-089 (Forest Reserve)</option><option value="HIVE-022">HIVE-022 (East Orchard)</option></select></div><div><label class="block text-xs font-semibold text-slate-700 mb-1.5" for="verify-trust-tier">Trust Tier</label><select class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800" id="verify-trust-tier"><option value="Lab-verified">Lab-verified</option><option value="Self-attested">Self-attested</option></select></div><div class="pt-3"><button class="w-full bg-[#B45309] hover:bg-[#92400E] text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2" type="submit"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Verify Hive</button></div></form></div><div class="mt-4 hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium" id="verify-hive-status-box">✓ Hive sensor cryptographically verified!</div></article></div>
+</section>
+<!-- END: CollectorScreenSection -->
+<!-- BEGIN: BeekeeperPortalSection (Harvest Logging) -->
+<section class="space-y-6 hidden" data-purpose="beekeeper-forms-portal" id="section-beekeeper">
+<div class="border-b border-amber-200/80 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<h2 class="text-2xl font-bold text-slate-900">Madhukosh — Harvest Logging Portal</h2>
+<p class="text-sm text-slate-500">Record fresh batch extractions from verified apiary hives.</p>
+</div>
+</div>
+<!-- Harvest Logging Single Centered Card -->
+<div class="max-w-xl mx-auto">
+<article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 flex flex-col justify-between" data-purpose="log-harvest-form">
+<div>
+<div class="flex items-center gap-3.5 mb-6">
+<span class="w-9 h-9 rounded-full bg-honey-100 text-honey-800 font-bold flex items-center justify-center text-sm border border-honey-300">3</span>
+<div>
+<h3 class="font-bold text-slate-900 text-lg">Log a harvest</h3>
+<p class="text-xs text-slate-400">Record fresh batch quantity</p>
+</div>
+</div>
+<form class="space-y-4" id="form-log-harvest" onsubmit="handleLogHarvest(event)">
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="harvest-hive-select">Hive</label>
+<select class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5 text-slate-800" id="harvest-hive-select">
+<option value="HIVE-042">HIVE-042 (Mahabaleshwar Plateau)</option>
+<option value="HIVE-089">HIVE-089 (Forest Reserve)</option>
+<option value="HIVE-022">HIVE-022 (East Orchard)</option>
+<option value="HIVE-014">HIVE-014 (Valley Unit)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="harvest-qty">Quantity (kg)</label>
+<input class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5" id="harvest-qty" placeholder="e.g. 22.5" required="" step="0.1" type="number"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-700 mb-1.5" for="harvest-date">Harvest date</label>
+<input class="w-full text-xs rounded-lg border-slate-300 focus:ring-honey-500 focus:border-honey-500 py-2.5 px-3.5" id="harvest-date" required="" type="date"/>
+</div>
+<div>
+</div>
+<div class="pt-2">
+<button class="w-full bg-[#B45309] hover:bg-[#92400E] text-white font-semibold py-2.5 px-4 rounded-lg text-xs shadow-sm transition active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                  Log harvest
+</button>
+</div>
+</form>
+</div>
+<!-- Threshold Alert box -->
+<div class="mt-4 p-3 rounded-lg bg-honey-50/80 border border-honey-200 text-xs text-honey-900 font-medium" id="harvest-status-box">
+            Threshold guard: Batches exceeding 50kg will automatically trigger anomaly audit.
+</div>
+</article>
+</div>
+</section>
+<!-- END: BeekeeperPortalSection -->
+<!-- BEGIN: AdminDashboardSection -->
+<section class="space-y-6" data-purpose="admin-batches-view" id="section-admin">
+<!-- Title & Filters Bar -->
+<div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+<span class="">Madhukosh — Admin Dashboard</span>
+<span class="text-xs font-medium bg-honey-100 text-honey-800 border border-honey-200 px-2.5 py-0.5 rounded-full">Honey Batches Ledger</span>
+</h1>
+<p class="text-sm text-slate-500 mt-1">Real-time surveillance of harvest yields, regional consistency checks, and fraud flagging.</p>
+</div>
+<!-- Controls: Filters & Actions -->
+<div class="flex items-center gap-3">
+</div>
+</div>
+<!-- Batch Ledger Table -->
+<div class="mt-6 overflow-x-auto rounded-xl border border-amber-200/70 shadow-xs">
+<table class="w-full text-left border-collapse" id="batches-table">
+<thead>
+<tr class="bg-gradient-to-r from-honey-700 via-honey-600 to-honey-700 text-white text-xs font-bold uppercase tracking-wider select-none">
+<th class="py-3.5 px-4" scope="col">Batch ID</th>
+<th class="py-3.5 px-4" scope="col">Hive</th>
+<th class="py-3.5 px-4" scope="col">Quantity (kg)</th>
+<th class="py-3.5 px-4" scope="col">Harvest Date</th>
+<th class="py-3.5 px-4" scope="col">Trust Tier</th>
+<th class="py-3.5 px-4" scope="col">Status</th>
+<th class="py-3.5 px-4 text-right" scope="col">Audit</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 text-xs font-medium text-slate-700 bg-white" id="batches-tbody"><tr class="hover:bg-amber-50/40 transition-colors"><td class="py-3.5 px-4"><button class="text-left group cursor-pointer" onclick="openAuditModal('MK-8921')"><span class="font-mono font-bold text-honey-800 group-hover:underline text-sm block">#MK-8921</span></button></td><td class="py-3.5 px-4"><div class="font-semibold text-slate-900">HIVE-042</div><div class="text-[11px] text-slate-500">Mahabaleshwar (Plateau Flora)</div></td><td class="py-3.5 px-4"><span class="text-sm font-semibold text-slate-900">24.5</span><span class="text-slate-400">kg</span></td><td class="py-3.5 px-4 text-slate-600">2026-09-18</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200"><svg class="w-3 h-3 mr-1" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg>Lab-Verified</span></td><td class="py-3.5 px-4"><button class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition cursor-pointer" onclick="openAuditModal('MK-8921')">OK</button></td><td class="py-3.5 px-4 text-right"><button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]" onclick="openAuditModal('MK-8921')"><svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Audit Passed</button></td></tr><tr class="flagged-row transition-colors"><td class="py-3.5 px-4"><button class="text-left group cursor-pointer" onclick="openAuditModal('MK-8920')"><span class="font-mono font-bold text-rose-800 group-hover:underline text-sm block">#MK-8920</span></button></td><td class="py-3.5 px-4"><div class="font-semibold text-rose-900">HIVE-014</div><div class="text-[11px] text-rose-600">Mahabaleshwar (Valley Unit)</div></td><td class="py-3.5 px-4"><span class="text-sm font-bold text-rose-900">182.0</span><span class="text-rose-500 font-semibold">kg (! Yield Spike)</span></td><td class="py-3.5 px-4 text-slate-700">2026-09-17</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">Self-Attested</span></td><td class="py-3.5 px-4"><button class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xs transition cursor-pointer" onclick="openAuditModal('MK-8920')"><svg class="w-3 h-3 mr-1" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path></svg>Flagged</button></td><td class="py-3.5 px-4 text-right"><button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]" onclick="openAuditModal('MK-8920')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Review Anomaly</button></td></tr><tr class="flagged-row transition-colors"><td class="py-3.5 px-4"><button class="text-left group cursor-pointer" onclick="openAuditModal('MK-8919')"><span class="font-mono font-bold text-rose-800 group-hover:underline text-sm block">#MK-8919</span></button></td><td class="py-3.5 px-4"><div class="font-semibold text-slate-900">HIVE-089</div><div class="text-[11px] text-slate-500">Mahabaleshwar (Forest Reserve)</div></td><td class="py-3.5 px-4"><span class="text-sm font-semibold text-slate-900">18.0</span><span class="text-slate-400">kg</span></td><td class="py-3.5 px-4 text-slate-600">2026-09-16</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">Self-Attested</span></td><td class="py-3.5 px-4"><button class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xs transition cursor-pointer" onclick="openAuditModal('MK-8919')"><svg class="w-3 h-3 mr-1" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path></svg>Flagged</button></td><td class="py-3.5 px-4 text-right"><button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]" onclick="openAuditModal('MK-8919')"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Review Anomaly</button></td></tr><tr class="hover:bg-amber-50/40 transition-colors"><td class="py-3.5 px-4"><button class="text-left group cursor-pointer" onclick="openAuditModal('MK-8918')"><span class="font-mono font-bold text-honey-800 group-hover:underline text-sm block">#MK-8918</span></button></td><td class="py-3.5 px-4"><div class="font-semibold text-slate-900">HIVE-022</div><div class="text-[11px] text-slate-500">Mahabaleshwar (East Orchard)</div></td><td class="py-3.5 px-4"><span class="text-sm font-semibold text-slate-900">32.2</span><span class="text-slate-400">kg</span></td><td class="py-3.5 px-4 text-slate-600">2026-09-15</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200"><svg class="w-3 h-3 mr-1" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg>Lab-Verified</span></td><td class="py-3.5 px-4"><button class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition cursor-pointer" onclick="openAuditModal('MK-8918')">OK</button></td><td class="py-3.5 px-4 text-right"><button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]" onclick="openAuditModal('MK-8918')"><svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Audit Passed</button></td></tr></tbody>
+</table>
+</div>
+<div class="mt-4 flex items-center justify-between text-xs text-slate-500 px-1">
+<span class="">Showing 4 of 322 logged harvests</span>
+</div>
+</div>
+</section>
+<!-- END: AdminDashboardSection -->
+<!-- BEGIN: BatchVerificationSection -->
+<section class="space-y-6 hidden" data-purpose="honey-batch-verification-tool" id="section-verification">
+<div class="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center space-y-6">
+<div>
+<div class="w-16 h-16 mx-auto bg-honey-100 border-2 border-honey-300 rounded-2xl flex items-center justify-center text-honey-700 mb-4 shadow-inner">
+<svg class="w-8 h-8" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Honey batch verification</h2>
+<p class="text-sm text-slate-500 mt-2">Scan consumer bottle QR code or input Batch ID to reveal origin provenance and purity certificate.</p>
+</div>
+<!-- Verification Search Bar -->
+<div class="flex gap-2 max-w-md mx-auto">
+<input class="w-full text-sm rounded-xl border-slate-300 focus:ring-honey-500 focus:border-honey-500 px-4 py-2.5 uppercase font-mono" id="verify-batch-input" placeholder="Enter Batch ID (e.g. MK-8921)" type="text" value="MK-8921"/>
+<button class="bg-[#B45309] hover:bg-[#92400E] text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition" onclick="runBatchLookup()">Verify</button>
+</div>
+<!-- Verification Result Card (Simulated Output) -->
+<div class="mt-8 border border-emerald-200 bg-emerald-50/50 rounded-2xl p-6 text-left space-y-4" id="verification-card">
+<div class="flex items-center justify-between pb-3 border-b border-emerald-100">
+<div class="flex items-center space-x-2">
+<span class="p-1 rounded-full bg-emerald-500 text-white">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+</span>
+<span class="font-bold text-slate-900 text-sm">Authentic Raw Forest Honey</span>
+</div>
+</div>
+<!-- Traceability Stepper -->
+<div class="space-y-3 pt-2">
+<div class="flex items-start gap-3">
+<span class="w-2.5 h-2.5 mt-1.5 rounded-full bg-honey-600 shrink-0"></span>
+<div>
+<p class="text-xs font-semibold text-slate-800">Beekeeper: Ramesh Patil (ID: #BK-101)</p>
+<p class="text-[11px] text-slate-500">Region: Mahabaleshwar Flora Zone 3</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="w-2.5 h-2.5 mt-1.5 rounded-full bg-honey-600 shrink-0"></span>
+<div>
+<p class="text-xs font-semibold text-slate-800">Hive: HIVE-042</p>
+<p class="text-[11px] text-slate-500">Extracted: 2026-09-18 | Weight: 24.5 kg</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="w-2.5 h-2.5 mt-1.5 rounded-full bg-honey-600 shrink-0"></span>
+<div>
+<p class="text-xs font-semibold text-slate-800">Purity Tier: Lab-Verified</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: BatchVerificationSection -->
+</main>
+<!-- END: MainContentContainer -->
+<!-- BEGIN: ModalDetails -->
+<aside aria-modal="true" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 transition-opacity duration-200 hidden" data-purpose="batch-inspector-modal" id="batch-modal" onclick="handleBackdropClick(event)"><div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 my-auto max-h-[92vh] overflow-y-auto transform transition-all duration-200 scale-95 opacity-0" id="batch-modal-card" onclick="event.stopPropagation()"><div class="flex items-center justify-between pb-4 border-b border-slate-100"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-honey-50 border border-honey-200 flex items-center justify-center text-honey-700 shadow-xs"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></div><div><div class="flex items-center gap-2"><h3 class="text-lg font-bold text-slate-900 leading-tight">Audit Verification Details</h3><span class="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-honey-100 text-honey-900 border border-honey-300" id="modal-batch-tag">#MK-8921</span></div><p class="text-xs text-slate-500 mt-0.5">Apiary origin verification &amp; field cryptographic ledger trail</p></div></div><button aria-label="Close modal" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-100 transition cursor-pointer" onclick="closeModal()"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button></div><div class="space-y-4 text-xs" id="modal-content"><!-- Content injected dynamically via openAuditModal --></div><div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div class="flex items-center gap-2 text-[11px] text-slate-500 font-mono"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span id="modal-ledger-state">Network Block #4289 • Verified</span></div><div class="flex items-center justify-end gap-2.5" id="modal-footer-actions"><button class="px-4 py-2.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer transition active:scale-[0.99]" onclick="closeModal()">Close</button><button class="px-4 py-2.5 text-xs font-semibold text-white bg-honey-700 hover:bg-honey-800 shadow-xs rounded-xl cursor-pointer transition active:scale-[0.99] flex items-center gap-1.5" id="modal-primary-btn" onclick="handlePrimaryAction()"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Download Traceability Report</button></div></div></div></aside>
+<!-- END: ModalDetails -->
+<!-- BEGIN: Footer -->
+<footer class="bg-white border-t border-slate-200 py-6 text-xs text-slate-500 mt-auto" data-purpose="portal-footer">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center space-x-2">
+<span class="font-bold text-slate-700">Madhukosh Traceability Protocol</span>
+</div>
+<div>
+<span class="">Cryptographic Purity Ledger</span>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+<!-- BEGIN: InteractiveScripts -->
+<!-- Tab navigation script -->
+<script data-purpose="tab-navigation">
+    function switchMainTab(tabName) {
+      // Hide all sections
+      const sections = ['admin', 'collector', 'beekeeper', 'verification'];
+      sections.forEach(sec => {
+        const el = document.getElementById(`section-${sec}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Reset tab buttons style
+      sections.forEach(name => {
+        const btn = document.getElementById(`tab-${name}`);
+        if (btn) {
+          btn.className = "px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+        }
+      });
+
+      // Activate chosen section & tab
+      const targetSec = document.getElementById(`section-${tabName}`);
+      if (targetSec) targetSec.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      if (activeBtn) {
+        activeBtn.className = "px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 text-honey-700 bg-honey-50 border border-honey-200/80 shadow-xs";
+      }
+    }
+  </script>
+<!-- Form Submission and Dynamic Table Script -->
+<script data-purpose="form-and-table-handlers">
+    // Batch Metadata Repository for high-fidelity audit verification modal
+    const batchAuditStore = {
+      'MK-8921': {
+        batchId: '#MK-8921',
+        hiveId: 'HIVE-042',
+        hiveLocation: 'Mahabaleshwar (Plateau Flora, Zone 3)',
+        quantity: '24.5 kg',
+        harvestDate: '2026-09-18',
+        harvestTimestamp: '18 Sep 2026, 07:45 AM IST',
+        verificationTimestamp: '18 Sep 2026, 11:20 AM IST',
+        trustTier: 'Lab-Verified',
+        status: 'Audit Passed',
+        isFlagged: false,
+        statusDescription: 'Consistent floral pollen spectra detected. Yield matches historical hive average for late-monsoon blooms.',
+        beekeeper: {
+          name: 'Ramesh Patil',
+          id: '#BK-101',
+          phone: '+91 98220 12345',
+          experience: '8 Years Apiary Partner',
+          region: 'Mahabaleshwar Plateau Flora'
+        },
+        collector: {
+          name: 'Anand Shinde',
+          role: 'Cluster Lead — Western Ghats South',
+          zone: 'Mahabaleshwar Plateau Cluster',
+          hub: 'Assigned Hub #C-04',
+          contact: '+91 94211 88421'
+        },
+        cryptoHash: 'sha256: 4f9e8a12bc9033de81c5a1762b90d4e3f6517a20c389be88a6d71b4029ce37ab'
+      },
+      'MK-8920': {
+        batchId: '#MK-8920',
+        hiveId: 'HIVE-014',
+        hiveLocation: 'Mahabaleshwar (Valley Unit Sector 2)',
+        quantity: '182.0 kg',
+        harvestDate: '2026-09-17',
+        harvestTimestamp: '17 Sep 2026, 06:15 AM IST',
+        verificationTimestamp: '17 Sep 2026, 09:30 AM IST',
+        trustTier: 'Self-Attested',
+        status: 'Flagged for Anomaly Investigation',
+        isFlagged: true,
+        statusDescription: 'Yield spike detected: Single hive reported 182.0 kg (Threshold >50.0 kg). Potential sugar syrup blending or aggregation fraud flagged for field inspection.',
+        beekeeper: {
+          name: 'Suresh Deshmukh',
+          id: '#BK-108',
+          phone: '+91 98902 44719',
+          experience: '1 Year Apiary Partner',
+          region: 'Mahabaleshwar Valley Unit'
+        },
+        collector: {
+          name: 'Anand Shinde',
+          role: 'Cluster Lead — Western Ghats South',
+          zone: 'Mahabaleshwar Valley Unit',
+          hub: 'Assigned Hub #C-04',
+          contact: '+91 94211 88421'
+        },
+        cryptoHash: 'sha256: e87c09312bba74fd09115dca8305c48b291d7912ab09d43efca5519102c918ee'
+      },
+      'MK-8919': {
+        batchId: '#MK-8919',
+        hiveId: 'HIVE-089',
+        hiveLocation: 'Mahabaleshwar (Forest Reserve Buffer)',
+        quantity: '18.0 kg',
+        harvestDate: '2026-09-16',
+        harvestTimestamp: '16 Sep 2026, 08:30 AM IST',
+        verificationTimestamp: '16 Sep 2026, 02:10 PM IST',
+        trustTier: 'Self-Attested',
+        status: 'Flagged for Anomaly Investigation',
+        isFlagged: true,
+        statusDescription: 'Missing geolocation cryptographic sync packet during box extraction. Optical refractometer reading pending submission.',
+        beekeeper: {
+          name: 'Kiran Shinde',
+          id: '#BK-103',
+          phone: '+91 97631 88902',
+          experience: '3 Years Apiary Partner',
+          region: 'Forest Reserve Sanctuary Zone'
+        },
+        collector: {
+          name: 'Pooja Kulkarni',
+          role: 'Cluster Lead — Foothill Flora & Reserves',
+          zone: 'Mahabaleshwar Forest Reserve',
+          hub: 'Assigned Hub #C-02',
+          contact: '+91 98600 55123'
+        },
+        cryptoHash: 'sha256: 7a83d9b012cef811904a62174c89201f99c2d1b7024ea55776a9b13904dd2b55'
+      },
+      'MK-8918': {
+        batchId: '#MK-8918',
+        hiveId: 'HIVE-022',
+        hiveLocation: 'Mahabaleshwar (East Orchard Belt)',
+        quantity: '32.2 kg',
+        harvestDate: '2026-09-15',
+        harvestTimestamp: '15 Sep 2026, 07:10 AM IST',
+        verificationTimestamp: '15 Sep 2026, 10:45 AM IST',
+        trustTier: 'Lab-Verified',
+        status: 'Audit Passed',
+        isFlagged: false,
+        statusDescription: 'Moisture content verified at 17.4% (compliant with FSSAI raw honey standards). Carbon isotope purity test: 99.2% authentic flora.',
+        beekeeper: {
+          name: 'Sunita Deshmukh',
+          id: '#BK-102',
+          phone: '+91 94235 67890',
+          experience: '5 Years Apiary Partner',
+          region: 'East Orchard Micro-climate'
+        },
+        collector: {
+          name: 'Anand Shinde',
+          role: 'Cluster Lead — Western Ghats South',
+          zone: 'East Orchard Agriculture Belt',
+          hub: 'Assigned Hub #C-04',
+          contact: '+91 94211 88421'
+        },
+        cryptoHash: 'sha256: 9b2d4f8812ce00391abf83907c112e457f9011ba28374dcc77610a52003ea614'
+      }
+    };
+
+    let activeModalBatchKey = null;
+
+    // Open Audit Verification Modal
+    function openAuditModal(batchKey) {
+      activeModalBatchKey = batchKey;
+      const data = batchAuditStore[batchKey] || {
+        batchId: `#${batchKey}`,
+        hiveId: 'HIVE-GENERIC',
+        hiveLocation: 'Mahabaleshwar Field Cluster',
+        quantity: '25.0 kg',
+        harvestDate: 'Recent',
+        harvestTimestamp: 'Recent extraction',
+        verificationTimestamp: 'Recently attested',
+        trustTier: 'Self-Attested',
+        status: 'Audit Passed',
+        isFlagged: false,
+        statusDescription: 'Standard telemetry recorded on decentralized apiary ledger.',
+        beekeeper: {
+          name: 'Ramesh Patil',
+          id: '#BK-101',
+          phone: '+91 98220 12345',
+          experience: 'Registered Beekeeper',
+          region: 'Mahabaleshwar'
+        },
+        collector: {
+          name: 'Anand Shinde',
+          role: 'Cluster Lead — Western Ghats South',
+          zone: 'Mahabaleshwar Valley Unit',
+          hub: 'Assigned Hub #C-04',
+          contact: '+91 94211 88421'
+        },
+        cryptoHash: 'sha256: a78bc8942ef331a980145be876110f2239ad00184'
+      };
+
+      const modal = document.getElementById('batch-modal');
+      const modalCard = document.getElementById('batch-modal-card');
+      const tagBadge = document.getElementById('modal-batch-tag');
+      const content = document.getElementById('modal-content');
+      const primaryBtn = document.getElementById('modal-primary-btn');
+      const ledgerState = document.getElementById('modal-ledger-state');
+
+      tagBadge.textContent = data.batchId;
+
+      // Render content
+      content.innerHTML = `
+        <!-- Audit Status Banner -->
+        <div class="p-4 rounded-xl border ${data.isFlagged ? 'bg-rose-50 border-rose-200 text-rose-900' : 'bg-emerald-50/80 border-emerald-200 text-emerald-900'}">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${data.isFlagged ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white shadow-xs'}">
+                ${data.isFlagged ? '⚠️ ' + data.status : '✓ ' + data.status}
+              </span>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold ${data.trustTier === 'Lab-Verified' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-amber-100 text-amber-800 border border-amber-300'}">
+                Tier: ${data.trustTier}
+              </span>
+            </div>
+            <span class="text-[11px] font-mono font-medium ${data.isFlagged ? 'text-rose-700' : 'text-emerald-700'}">Yield: ${data.quantity}</span>
+          </div>
+          <p class="text-xs leading-relaxed ${data.isFlagged ? 'text-rose-800' : 'text-emerald-800'}">
+            ${data.statusDescription}
+          </p>
+        </div>
+
+        <!-- 2 Column Grid for Beekeeper & Collector Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <!-- Beekeeper Box -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+              <div class="w-6 h-6 rounded-md bg-honey-100 text-honey-800 flex items-center justify-center font-bold text-xs">
+                🐝
+              </div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Beekeeper Details</h4>
+                <p class="text-[10px] text-slate-400">Hive Owner &amp; Producer</p>
+              </div>
+            </div>
+            <div class="space-y-1.5 pt-1 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Name:</span>
+                <span class="font-bold text-slate-900">${data.beekeeper.name} <span class="text-honey-700 font-mono">(${data.beekeeper.id})</span></span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Phone:</span>
+                <a href="tel:${data.beekeeper.phone}" class="font-semibold text-slate-800 hover:text-honey-700 font-mono">${data.beekeeper.phone}</a>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Hive ID:</span>
+                <span class="font-mono font-bold text-honey-800 bg-honey-50 px-1.5 py-0.5 rounded border border-honey-200">${data.hiveId}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Location:</span>
+                <span class="font-medium text-slate-700 text-right text-[11px] max-w-[180px] truncate">${data.hiveLocation}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster Collector Box -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="flex items-center gap-2 pb-2 border-b border-slate-200">
+              <div class="w-6 h-6 rounded-md bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs">
+                📋
+              </div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Cluster Collector</h4>
+                <p class="text-[10px] text-slate-400">Regional Verification Lead</p>
+              </div>
+            </div>
+            <div class="space-y-1.5 pt-1 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-500">Collector:</span>
+                <span class="font-bold text-slate-900">${data.collector.name}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Designation:</span>
+                <span class="font-medium text-slate-700 text-right text-[11px]">${data.collector.role}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Zone / Hub:</span>
+                <span class="font-medium text-slate-800">${data.collector.zone} (<span class="font-semibold text-honey-800">${data.collector.hub}</span>)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Coordinator Cell:</span>
+                <a href="tel:${data.collector.contact}" class="font-semibold text-slate-800 hover:text-honey-700 font-mono">${data.collector.contact}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Timestamps & Cryptographic Ledger Info -->
+        <div class="bg-amber-50/40 p-4 rounded-xl border border-amber-200/70 space-y-2.5">
+          <div class="flex items-center justify-between pb-1.5 border-b border-amber-200/50">
+            <span class="font-bold text-amber-950 text-xs uppercase tracking-wider">Traceability Chain &amp; Audit Log</span>
+            <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+              Cryptographically Attested
+            </span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <span class="text-slate-500 block text-[11px]">Harvest Timestamp:</span>
+              <span class="font-semibold text-slate-800">${data.harvestTimestamp}</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-[11px]">Verification Timestamp:</span>
+              <span class="font-semibold text-slate-800">${data.verificationTimestamp}</span>
+            </div>
+          </div>
+          <div class="pt-1">
+            <span class="text-slate-500 block text-[10px] uppercase font-semibold">Digital Cryptographic Signature / Hash:</span>
+            <div class="bg-white/80 p-2 rounded-lg border border-amber-200 font-mono text-[10px] text-slate-600 break-all select-all flex items-center justify-between gap-2 mt-0.5">
+              <span>${data.cryptoHash}</span>
+              <button onclick="navigator.clipboard.writeText('${data.cryptoHash}'); alert('Cryptographic hash copied to clipboard!');" class="text-honey-700 hover:text-honey-900 shrink-0 font-sans font-semibold text-[11px] px-1.5 py-0.5 bg-amber-50 rounded hover:bg-amber-100 transition">Copy</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Configure Footer buttons & status badge
+      if (data.isFlagged) {
+        ledgerState.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span><span class="text-rose-700 font-semibold">Flagged for Verification Inspection</span>`;
+        primaryBtn.textContent = 'Resolve Anomaly Flag';
+        primaryBtn.className = 'px-4 py-2.5 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-xs rounded-xl cursor-pointer transition active:scale-[0.99] flex items-center gap-1.5';
+        primaryBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Resolve Anomaly Flag`;
+      } else {
+        ledgerState.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Network Block #4289 • Verified Pure</span>`;
+        primaryBtn.textContent = 'Download Traceability Report';
+        primaryBtn.className = 'px-4 py-2.5 text-xs font-semibold text-white bg-honey-700 hover:bg-honey-800 shadow-xs rounded-xl cursor-pointer transition active:scale-[0.99] flex items-center gap-1.5';
+        primaryBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Download Traceability Report`;
+      }
+
+      // Show modal with smooth transition
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modalCard.classList.remove('scale-95', 'opacity-0');
+        modalCard.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    // Modal Close
+    function closeModal() {
+      const modal = document.getElementById('batch-modal');
+      const modalCard = document.getElementById('batch-modal-card');
+      if (modalCard) {
+        modalCard.classList.remove('scale-100', 'opacity-100');
+        modalCard.classList.add('scale-95', 'opacity-0');
+      }
+      setTimeout(() => {
+        if (modal) modal.classList.add('hidden');
+      }, 150);
+    }
+
+    // Backdrop click close
+    function handleBackdropClick(event) {
+      if (event.target.id === 'batch-modal') {
+        closeModal();
+      }
+    }
+
+    // Modal Primary Action Button Handler
+    function handlePrimaryAction() {
+      if (!activeModalBatchKey) return;
+      const data = batchAuditStore[activeModalBatchKey];
+      if (data && data.isFlagged) {
+        data.isFlagged = false;
+        data.status = 'Audit Passed';
+        data.statusDescription = 'Flag resolved by Central Apiary Inspector. Honey re-tested and certified conforming to standards.';
+        alert(`Audit flag resolved for Batch ${data.batchId}! Status updated to Audit Passed.`);
+        closeModal();
+      } else {
+        alert(`Generating official PDF Traceability & Provenance Certificate for ${data ? data.batchId : 'Batch'}...`);
+      }
+    }
+
+    // Legacy compatibility wrapper
+    function previewBatchModal(id) {
+      openAuditModal(id);
+    }
+
+    // Initial State for Form Handlers
+    let nextHiveNum = 44;
+    let nextBatchNum = 8922;
+
+    // Set today's date in harvest form
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      const harvestDateInput = document.getElementById('harvest-date');
+      if (harvestDateInput) {
+        harvestDateInput.value = today;
+      }
+    });
+
+    // Form 1: Register Beekeeper
+    function handleRegisterBeekeeper(e) {
+      e.preventDefault();
+      const name = document.getElementById('bk-name').value.trim();
+      const phone = document.getElementById('bk-phone').value.trim();
+      const region = document.getElementById('bk-region').value.trim();
+
+      if (!name) return;
+
+      // Update Select list in Form 2
+      const select = document.getElementById('hive-beekeeper-select');
+      const newOption = document.createElement('option');
+      newOption.value = `bk-${Date.now()}`;
+      newOption.textContent = `${name} (${region})`;
+      newOption.selected = true;
+      select.appendChild(newOption);
+
+      // Show feedback
+      const statusBox = document.getElementById('bk-status-box');
+      statusBox.textContent = `✓ Beekeeper '${name}' registered with phone ${phone} in ${region}`;
+      statusBox.classList.remove('hidden');
+
+      document.getElementById('bk-name').value = '';
+      document.getElementById('bk-phone').value = '';
+
+      setTimeout(() => statusBox.classList.add('hidden'), 5000);
+    }
+
+    // Form 2: Add a Hive
+    function handleAddHive(e) {
+      e.preventDefault();
+      const beekeeperSelect = document.getElementById('hive-beekeeper-select');
+      const beekeeperText = beekeeperSelect.options[beekeeperSelect.selectedIndex].text;
+      const currentHiveId = `HIVE-0${nextHiveNum}`;
+
+      // Update Harvest Hive Select dropdown in Form 3
+      const harvestHiveSelect = document.getElementById('harvest-hive-select');
+      if (harvestHiveSelect) {
+        const opt = document.createElement('option');
+        opt.value = currentHiveId;
+        opt.textContent = `${currentHiveId} (${beekeeperText.split(' ')[0]}'s Box)`;
+        opt.selected = true;
+        harvestHiveSelect.appendChild(opt);
+      }
+
+      // Increment counters
+      nextHiveNum++;
+      document.getElementById('next-hive-id-preview').textContent = `HIVE-0${nextHiveNum}`;
+
+      // Show status
+      const statusBox = document.getElementById('hive-status-box');
+      statusBox.textContent = `✓ Generated & registered ${currentHiveId} for ${beekeeperText}`;
+      statusBox.className = "mt-4 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium";
+      statusBox.classList.remove('hidden');
+
+      setTimeout(() => statusBox.classList.add('hidden'), 5000);
+    }
+
+    // Form 3: Log a Harvest & Append to Table
+    function handleLogHarvest(e) {
+      e.preventDefault();
+      const hiveId = document.getElementById('harvest-hive-select').value;
+      const qty = parseFloat(document.getElementById('harvest-qty').value);
+      const harvestDate = document.getElementById('harvest-date').value;
+      const trustTier = 'Lab-Verified';
+
+      const rawBatchId = `MK-${nextBatchNum++}`;
+      const batchId = `#${rawBatchId}`;
+      
+      // Fraud check condition (Spike over 50kg or anomaly)
+      const isFraudFlagged = (qty > 50.0);
+
+      // Register new batch metadata in store
+      batchAuditStore[rawBatchId] = {
+        batchId: batchId,
+        hiveId: hiveId,
+        hiveLocation: 'Mahabaleshwar Field Cluster',
+        quantity: `${qty.toFixed(1)} kg`,
+        harvestDate: harvestDate,
+        harvestTimestamp: `${harvestDate}, 08:00 AM IST`,
+        verificationTimestamp: `${harvestDate}, 11:30 AM IST`,
+        trustTier: trustTier,
+        status: isFraudFlagged ? 'Flagged for Anomaly Investigation' : 'Audit Passed',
+        isFlagged: isFraudFlagged,
+        statusDescription: isFraudFlagged ? 'Single hive extraction yield exceeds maximum natural threshold (>50kg per box). Automated telemetry guard triggered.' : 'Normal pollen distribution and refractometer density profile confirmed.',
+        beekeeper: {
+          name: 'Ramesh Patil',
+          id: '#BK-101',
+          phone: '+91 98220 12345',
+          experience: 'Registered Beekeeper',
+          region: 'Mahabaleshwar'
+        },
+        collector: {
+          name: 'Anand Shinde',
+          role: 'Cluster Lead — Western Ghats South',
+          zone: 'Mahabaleshwar Valley Unit',
+          hub: 'Assigned Hub #C-04',
+          contact: '+91 94211 88421'
+        },
+        cryptoHash: `sha256: ${Math.random().toString(16).substr(2, 8)}4b12c98033de81c5a1762b90d4e3f6517a20c389be88a6d71b4029ce37ab`
+      };
+
+      // Table tbody
+      const tbody = document.getElementById('batches-tbody');
+      const row = document.createElement('tr');
+      row.className = isFraudFlagged ? 'flagged-row transition-colors' : 'hover:bg-amber-50/40 transition-colors';
+
+      let trustBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+
+      const statusBadge = isFraudFlagged 
+        ? `<button onclick="openAuditModal('${rawBatchId}')" class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-600 text-white shadow-xs transition cursor-pointer hover:bg-rose-700">
+            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            Flagged
+           </button>`
+        : `<button onclick="openAuditModal('${rawBatchId}')" class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer">OK</button>`;
+
+      const auditButton = isFraudFlagged
+        ? `<button onclick="openAuditModal('${rawBatchId}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Review Anomaly
+           </button>`
+        : `<button onclick="openAuditModal('${rawBatchId}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 shadow-xs hover:shadow transition cursor-pointer active:scale-[0.99]">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>Audit Passed
+           </button>`;
+
+      row.innerHTML = `
+        <td class="py-3.5 px-4"><button onclick="openAuditModal('${rawBatchId}')" class="text-left group cursor-pointer"><span class="font-mono font-bold ${isFraudFlagged ? 'text-rose-800' : 'text-honey-800'} group-hover:underline text-sm block">${batchId}</span></button></td>
+        <td class="py-3.5 px-4">
+          <div class="font-semibold ${isFraudFlagged ? 'text-rose-900' : 'text-slate-900'}">${hiveId}</div>
+          <div class="text-[11px] ${isFraudFlagged ? 'text-rose-600' : 'text-slate-500'}">Mahabaleshwar Field Cluster</div>
+        </td>
+        <td class="py-3.5 px-4">
+          <span class="text-sm font-semibold ${isFraudFlagged ? 'text-rose-900 font-bold' : 'text-slate-900'}">${qty.toFixed(1)}</span>
+          <span class="${isFraudFlagged ? 'text-rose-500 font-semibold' : 'text-slate-400'}">kg ${isFraudFlagged ? '(! Yield Spike)' : ''}</span>
+        </td>
+        <td class="py-3.5 px-4 text-slate-600">${harvestDate}</td>
+        <td class="py-3.5 px-4">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${trustBadgeClass}">
+            ${trustTier}
+          </span>
+        </td>
+        <td class="py-3.5 px-4">${statusBadge}</td>
+        <td class="py-3.5 px-4 text-right">${auditButton}</td>
+      `;
+
+      tbody.insertBefore(row, tbody.firstChild);
+
+      alert(`Harvest Batch ${batchId} logged successfully! Click 'Audit Passed' or 'Review Anomaly' to inspect full provenance.`);
+      switchMainTab('admin');
+      document.getElementById('harvest-qty').value = '';
+    }
+
+    function runBatchLookup() {
+      const rawInput = document.getElementById('verify-batch-input').value.trim();
+      const code = rawInput.replace('#', '').toUpperCase();
+      const card = document.getElementById('verification-card');
+      if (code) {
+        card.classList.remove('hidden');
+        if (batchAuditStore[code]) {
+          openAuditModal(code);
+        }
+      } else {
+        alert("Please enter a valid Batch ID (e.g. MK-8921)");
+      }
+    }
+  </script>
+<!-- END: InteractiveScripts -->
+</body></html>

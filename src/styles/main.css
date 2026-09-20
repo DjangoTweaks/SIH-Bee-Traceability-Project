@@ -1,0 +1,22 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FAFAF7;
+  color: #1F2937;
+}
+
+.honeycomb-pattern {
+  background-image:
+    radial-gradient(rgba(217, 119, 6, 0.08) 1.5px, transparent 1.5px),
+    radial-gradient(rgba(217, 119, 6, 0.08) 1.5px, #FAFAF7 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.flagged-row {
+  background-color: #FEF2F2 !important;
+  border-left: 4px solid #EF4444;
+}
+
+.flagged-row:hover {
+  background-color: #FEE2E2 !important;
+}
