@@ -71,6 +71,12 @@
 </header>
 <!-- END: MainHeader -->
 
+<div id="config-warning-banner" class="hidden bg-rose-600 text-white text-xs sm:text-sm font-medium px-4 py-2.5 text-center">
+  Supabase is not configured on this deployment — set <code class="font-mono bg-rose-700/60 px-1 rounded">VITE_SUPABASE_URL</code>
+  and <code class="font-mono bg-rose-700/60 px-1 rounded">VITE_SUPABASE_ANON_KEY</code> in your hosting provider's environment
+  variables and redeploy.
+</div>
+
 <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
   <!-- BEGIN: CollectorScreenSection -->

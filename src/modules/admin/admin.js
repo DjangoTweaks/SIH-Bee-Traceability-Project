@@ -68,7 +68,7 @@ function renderRow(vm) {
         <span class="text-sm font-semibold ${qtyClass}">${vm.quantityKg.toFixed(1)}</span>
         <span class="${kgClass}">kg ${vm.isYieldSpike ? '(! Yield Spike)' : ''}</span>
       </td>
-      <td class="py-3.5 px-4 text-slate-600">${vm.harvestDate}</td>
+      <td class="py-3.5 px-4 text-slate-600">${vm.harvestDate}${vm.isOutOfSeason ? ' <span class="text-rose-500 font-semibold text-[11px]">(! Off-Season)</span>' : ''}</td>
       <td class="py-3.5 px-4"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${tierClass}">${vm.trustTier}</span></td>
       <td class="py-3.5 px-4">${statusBadge}</td>
       <td class="py-3.5 px-4 text-right">${auditButton}</td>

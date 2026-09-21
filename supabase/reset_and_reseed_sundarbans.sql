@@ -1,38 +1,53 @@
--- Sundarbans-region seed data for the Madhukosh Apiary & Traceability
--- Network prototype. Run after schema.sql (and after reset.sql if you're
--- re-seeding a database that already has data).
+-- One-shot: wipe every row of Madhukosh data and replace it with the
+-- Sundarbans-region dataset. Run this once, in full, in the Supabase SQL
+-- editor: https://supabase.com/dashboard/project/cljxvdqcnverxlzwrril/sql/new
+--
+-- This also fixes the underlying column defaults (region/location), which
+-- previously still defaulted to 'Mahabaleshwar ...' at the database level
+-- even after the app's own code was updated — any hive added via the
+-- Cluster Collector form without an explicit location was silently falling
+-- back to that stale default. Confirmed live: HIVE-043 through HIVE-046
+-- all picked up "Mahabaleshwar Field Cluster" this way.
+
+-- ---------------------------------------------------------------------------
+-- 1. Fix column defaults so future rows never default to Mahabaleshwar again
+-- ---------------------------------------------------------------------------
+alter table beekeepers alter column region set default 'Sundarbans';
+alter table hives alter column location set default 'Sundarban Mangrove Cluster';
+
+-- ---------------------------------------------------------------------------
+-- 2. Wipe all existing data and reset the auto-ID sequences
+-- ---------------------------------------------------------------------------
+truncate table batches, hives, beekeepers, collectors cascade;
+
+alter sequence beekeeper_display_seq restart with 104;
+alter sequence hive_display_seq restart with 43;
+alter sequence batch_display_seq restart with 8922;
+
+-- ---------------------------------------------------------------------------
+-- 3. Seed the Sundarbans-region dataset
 --
 -- Reflects the Sundarbans mangrove forest delta (West Bengal, India):
 -- traditional honey collectors ("Moulis") harvest wild mangrove honey from
 -- forest blocks inside and around the Sundarban Tiger Reserve, working
 -- Khalsi (Aegiceras corniculatum), Kewra (Sonneratia apetala) and Goran
--- (Ceriops) mangrove blooms during the Chaitra–Jaistha honey season.
-
--- Also fixes the region/location column defaults, which otherwise still
--- default to 'Mahabaleshwar ...' at the database level on an older schema
--- run (see migrations/002_fix_region_defaults.sql). Safe to run again even
--- if already applied.
-alter table beekeepers alter column region set default 'Sundarbans';
-alter table hives alter column location set default 'Sundarban Mangrove Cluster';
-
+-- (Ceriops) mangrove blooms during the Chaitra-Jaistha honey season.
+-- ---------------------------------------------------------------------------
 insert into collectors (id, name, role, zone, hub, contact) values
   ('11111111-1111-1111-1111-111111111101', 'Debashish Halder', 'Cluster Lead — Sundarban Delta North', 'Gosaba–Basanti Range Cluster', 'Assigned Hub #S-01', '+91 98300 41256'),
-  ('11111111-1111-1111-1111-111111111102', 'Farida Sardar', 'Cluster Lead — Tiger Reserve Buffer South', 'Kultali Forest Fringe Cluster', 'Assigned Hub #S-03', '+91 96351 78420')
-on conflict (id) do nothing;
+  ('11111111-1111-1111-1111-111111111102', 'Farida Sardar', 'Cluster Lead — Tiger Reserve Buffer South', 'Kultali Forest Fringe Cluster', 'Assigned Hub #S-03', '+91 96351 78420');
 
 insert into beekeepers (id, display_id, name, phone, region, experience, registered_by) values
   ('22222222-2222-2222-2222-222222222101', '#BK-101', 'Provat Mondal', '+91 90512 34567', 'Gosaba Mangrove Belt', '12 Years Registered Mouli', '11111111-1111-1111-1111-111111111101'),
   ('22222222-2222-2222-2222-222222222102', '#BK-102', 'Anupama Sardar', '+91 89621 55210', 'Sagar Island Coastal Grove', '6 Years Registered Mouli', '11111111-1111-1111-1111-111111111101'),
   ('22222222-2222-2222-2222-222222222103', '#BK-103', 'Biswajit Mridha', '+91 97331 90876', 'Kultali Forest Fringe', '4 Years Registered Mouli', '11111111-1111-1111-1111-111111111102'),
-  ('22222222-2222-2222-2222-222222222108', '#BK-108', 'Sukumar Bag', '+91 91234 66789', 'Bali Island Buffer Zone', '2 Years Registered Mouli', '11111111-1111-1111-1111-111111111101')
-on conflict (id) do nothing;
+  ('22222222-2222-2222-2222-222222222108', '#BK-108', 'Sukumar Bag', '+91 91234 66789', 'Bali Island Buffer Zone', '2 Years Registered Mouli', '11111111-1111-1111-1111-111111111101');
 
 insert into hives (id, display_id, beekeeper_id, location, trust_tier, status, verified_at, verified_by) values
   ('33333333-3333-3333-3333-333333333042', 'HIVE-042', '22222222-2222-2222-2222-222222222101', 'Sundarbans (Pirkhali Forest Block, Zone 2)', 'Lab-Verified', 'Active', now() - interval '10 days', '11111111-1111-1111-1111-111111111101'),
   ('33333333-3333-3333-3333-333333333089', 'HIVE-089', '22222222-2222-2222-2222-222222222103', 'Sundarbans (Jhilla Forest Camp Buffer)', 'Self-Attested', 'Active', null, null),
   ('33333333-3333-3333-3333-333333333022', 'HIVE-022', '22222222-2222-2222-2222-222222222102', 'Sundarbans (Sagar Island, Bakkhali Grove)', 'Lab-Verified', 'Active', now() - interval '15 days', '11111111-1111-1111-1111-111111111101'),
-  ('33333333-3333-3333-3333-333333333014', 'HIVE-014', '22222222-2222-2222-2222-222222222108', 'Sundarbans (Netidhopani, Sector 4)', 'Self-Attested', 'Active', null, null)
-on conflict (id) do nothing;
+  ('33333333-3333-3333-3333-333333333014', 'HIVE-014', '22222222-2222-2222-2222-222222222108', 'Sundarbans (Netidhopani, Sector 4)', 'Self-Attested', 'Active', null, null);
 
 insert into batches (
   id, display_id, hive_id, collector_id, quantity_kg, harvest_date,
@@ -74,5 +89,4 @@ insert into batches (
     'Lab-Verified', 'Audit Passed', false,
     'Moisture content verified at 18.1% (compliant with FSSAI raw honey standards for mangrove-forest honey). Carbon isotope purity test: 99.4% authentic Sundarban mangrove flora (Kewra/Khalsi dominant).',
     'sha256:9b2d4f8812ce00391abf83907c112e457f9011ba28374dcc77610a52003ea614'
-  )
-on conflict (id) do nothing;
+  );

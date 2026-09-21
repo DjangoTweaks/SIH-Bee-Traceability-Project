@@ -49,7 +49,12 @@ src/
       connectionStatus.js         Header dot reflecting live Supabase connectivity
 supabase/
   schema.sql                  Tables, sequences, fraud-guard trigger, RLS policies
-  seed.sql                    Seed data matching the original mockup's example batches
+  seed.sql                    Sundarbans-region example beekeepers/hives/batches
+  reset.sql                   Wipes all rows and resets auto-ID sequences (run before re-seeding)
+  reset_and_reseed_sundarbans.sql   Recommended: reset.sql + defaults fix + seed.sql, in one paste
+  migrations/
+    001_fix_batch_display_id_prefix.sql   One-off fix for a batch-ID formatting bug (see git history)
+    002_fix_region_defaults.sql           One-off fix for stale Mahabaleshwar column defaults
 legacy/
   code.html, screen.png       Original static prototype, kept for reference
 ```
@@ -85,10 +90,19 @@ key, which can't run DDL. In the [Supabase SQL Editor](https://supabase.com/dash
 1. Paste and run all of [`supabase/schema.sql`](supabase/schema.sql) — creates the
    `collectors`, `beekeepers`, `hives`, `batches` tables, the auto-ID sequences,
    the fraud-guard trigger, and RLS policies.
-2. Paste and run all of [`supabase/seed.sql`](supabase/seed.sql) — inserts the
-   same example beekeepers/hives/batches the original mockup shipped with
-   (Ramesh Patil, HIVE-042, #MK-8921, etc.), so the app looks identical on
-   first load.
+2. Paste and run all of [`supabase/seed.sql`](supabase/seed.sql) — inserts example
+   Sundarbans-region beekeepers ("Moulis"), hives, and batches (Provat Mondal,
+   HIVE-042, #MK-8921, etc.) so the app has data to show on first load.
+
+To wipe all data and reseed with a clean Sundarbans dataset in one go (e.g.
+after testing has left stray/leftover rows), run
+[`supabase/reset_and_reseed_sundarbans.sql`](supabase/reset_and_reseed_sundarbans.sql)
+instead — it fixes the `region`/`location` column defaults (an earlier bug
+let these still default to `'Mahabaleshwar ...'` at the DB level even after
+the app code was updated), truncates every table, resets the auto-ID
+sequences, and inserts the full Sundarbans seed set, all in one paste.
+(`reset.sql` and `seed.sql` still exist separately if you want to run those
+steps independently.)
 
 ### 4. Run the app
 

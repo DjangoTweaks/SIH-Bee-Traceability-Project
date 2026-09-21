@@ -1,6 +1,16 @@
 import { supabase } from '../supabaseClient.js';
 
-const FRAUD_THRESHOLD_KG = 50.0;
+const FRAUD_THRESHOLD_KG = 8.0;
+
+// Authentic Sundarban mangrove honey (Khalsi/Kewra/Goran bloom) can only be
+// lab-detected during the Chaitra–Jaistha season, roughly March–May. A
+// harvest dated outside that window can't be genuine Sundarban honey.
+const IN_SEASON_MONTHS = [3, 4, 5];
+
+function isOutOfSeason(harvestDate) {
+  const month = new Date(harvestDate).getUTCMonth() + 1;
+  return !IN_SEASON_MONTHS.includes(month);
+}
 
 const SELECT_WITH_RELATIONS = `
   *,
@@ -36,7 +46,9 @@ export async function getBatchByDisplayId(rawDisplayId) {
 }
 
 export async function logHarvest({ hiveId, quantityKg, harvestDate, collectorId }) {
-  const isFlagged = quantityKg > FRAUD_THRESHOLD_KG;
+  const isYieldSpike = quantityKg > FRAUD_THRESHOLD_KG;
+  const isOffSeason = isOutOfSeason(harvestDate);
+  const isFlagged = isYieldSpike || isOffSeason;
 
   // Snapshot the hive's current trust tier onto the batch at log time, so the
   // stored record reflects what was actually true then. The ledger's display
@@ -59,14 +71,25 @@ export async function logHarvest({ hiveId, quantityKg, harvestDate, collectorId 
       trust_tier: hive.trust_tier,
       is_flagged: isFlagged,
       status: isFlagged ? 'Flagged for Anomaly Investigation' : 'Audit Passed',
-      status_description: isFlagged
-        ? 'Single hive extraction yield exceeds maximum natural threshold (>50kg per box). Automated telemetry guard triggered.'
-        : 'Normal pollen distribution and refractometer density profile confirmed.',
+      status_description: buildStatusDescription({ isYieldSpike, isOffSeason }),
     })
     .select(SELECT_WITH_RELATIONS)
     .single();
   if (error) throw error;
   return data;
+}
+
+function buildStatusDescription({ isYieldSpike, isOffSeason }) {
+  if (isYieldSpike && isOffSeason) {
+    return `Yield spike detected (>${FRAUD_THRESHOLD_KG.toFixed(1)} kg) and harvest date falls outside the March–May Sundarban mangrove bloom window (Chaitra–Jaistha). Automated telemetry guard triggered.`;
+  }
+  if (isYieldSpike) {
+    return `Single hive extraction yield exceeds maximum natural threshold (>${FRAUD_THRESHOLD_KG.toFixed(1)} kg per box). Automated telemetry guard triggered.`;
+  }
+  if (isOffSeason) {
+    return 'Harvest date falls outside the March–May Sundarban mangrove bloom window (Chaitra–Jaistha) — authentic Sundarban honey cannot be lab-detected outside this season. Flagged for field inspection.';
+  }
+  return 'Normal pollen distribution and refractometer density profile confirmed.';
 }
 
 export async function resolveAnomalyFlag(batchId) {

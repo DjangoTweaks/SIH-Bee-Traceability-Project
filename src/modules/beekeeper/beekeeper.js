@@ -24,6 +24,13 @@ async function refreshHiveSelect() {
   if (previous && hives.some((h) => h.id === previous)) select.value = previous;
 }
 
+function flaggedReason(vm) {
+  const reasons = [];
+  if (vm.isYieldSpike) reasons.push('yield exceeded 8kg');
+  if (vm.isOutOfSeason) reasons.push('harvest date is outside the March–May Sundarban season');
+  return `Flagged for anomaly review: ${reasons.join(' and ')}.`;
+}
+
 function wireForm() {
   const form = document.getElementById('form-log-harvest');
   form.addEventListener('submit', async (event) => {
@@ -43,10 +50,7 @@ function wireForm() {
       const collector = await getDefaultCollector();
       const batch = await logHarvest({ hiveId, quantityKg: qty, harvestDate, collectorId: collector?.id });
       const vm = toBatchViewModel(batch);
-      alert(
-        `Harvest Batch ${vm.batchId} logged successfully!` +
-          (vm.isFlagged ? ' Yield exceeded 50kg — flagged for anomaly review.' : ' Click it in the Admin Dashboard to inspect full provenance.')
-      );
+      alert(`Harvest Batch ${vm.batchId} logged successfully!` + (vm.isFlagged ? ` ${flaggedReason(vm)}` : ' Click it in the Admin Dashboard to inspect full provenance.'));
       emit('batch:created', batch);
       document.getElementById('harvest-qty').value = '';
       document.getElementById('harvest-date').value = todayISODate();

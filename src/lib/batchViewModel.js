@@ -1,6 +1,16 @@
 import { formatDateTime, formatQuantity } from './format.js';
 
-const FRAUD_THRESHOLD_KG = 50.0;
+const FRAUD_THRESHOLD_KG = 8.0;
+
+// Authentic Sundarban mangrove honey can only be lab-detected during the
+// Chaitra–Jaistha bloom season, roughly March–May.
+const IN_SEASON_MONTHS = [3, 4, 5];
+
+function isOutOfSeason(harvestDate) {
+  if (!harvestDate) return false;
+  const month = new Date(harvestDate).getUTCMonth() + 1;
+  return !IN_SEASON_MONTHS.includes(month);
+}
 
 // Maps a raw Supabase `batches` row (joined with hive/beekeeper/collector)
 // into the flat shape the UI templates expect.
@@ -17,6 +27,7 @@ export function toBatchViewModel(batch) {
     quantityKg: Number(batch.quantity_kg),
     quantity: formatQuantity(batch.quantity_kg),
     isYieldSpike: Number(batch.quantity_kg) > FRAUD_THRESHOLD_KG,
+    isOutOfSeason: isOutOfSeason(batch.harvest_date),
     harvestDate: batch.harvest_date,
     harvestTimestamp: formatDateTime(batch.harvest_timestamp),
     verificationTimestamp: formatDateTime(batch.verification_timestamp),
