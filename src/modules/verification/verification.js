@@ -1,3 +1,4 @@
+import jsQR from 'jsqr';
 import { getBatchByDisplayId } from '../../lib/api/batches.js';
 import { toBatchViewModel } from '../../lib/batchViewModel.js';
 import { showBatchModal } from '../shared/auditModal.js';
@@ -5,6 +6,7 @@ import { showBatchModal } from '../shared/auditModal.js';
 export async function mountVerificationTab() {
   const input = document.getElementById('verify-batch-input');
   const btn = document.getElementById('verify-batch-btn');
+  const qrUpload = document.getElementById('verify-qr-upload');
 
   const run = () => runLookup(input.value);
   btn.addEventListener('click', run);
@@ -15,8 +17,61 @@ export async function mountVerificationTab() {
     }
   });
 
+  qrUpload.addEventListener('change', async () => {
+    const file = qrUpload.files?.[0];
+    if (!file) return;
+    try {
+      const decodedText = await decodeQRImage(file);
+      const batchId = extractBatchId(decodedText);
+      if (!batchId) {
+        document.getElementById('verification-result').innerHTML = messageCardHTML(
+          `QR code scanned, but it doesn't contain a recognizable Batch ID ("${decodedText}").`,
+          true
+        );
+        return;
+      }
+      input.value = batchId;
+      await runLookup(batchId);
+    } catch (err) {
+      document.getElementById('verification-result').innerHTML = messageCardHTML(`Could not read QR code: ${err.message}`, true);
+    } finally {
+      qrUpload.value = '';
+    }
+  });
+
   // Pre-populate with the example batch shown as placeholder text.
   await runLookup(input.value);
+}
+
+// Batch IDs are printed on the bottle as "MK-XXXX" (optionally "#"-prefixed),
+// and may be embedded inside a longer QR payload (e.g. a verification URL),
+// so pull just that token out rather than requiring an exact match.
+function extractBatchId(decodedText) {
+  const match = decodedText.match(/#?MK-?\d+/i);
+  return match ? match[0].replace(/^#/, '').toUpperCase() : null;
+}
+
+function decodeQRImage(file) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const result = jsQR(imageData.data, imageData.width, imageData.height);
+      URL.revokeObjectURL(image.src);
+      if (!result) {
+        reject(new Error('No QR code detected in the image.'));
+        return;
+      }
+      resolve(result.data);
+    };
+    image.onerror = () => reject(new Error('Could not read the uploaded file as an image.'));
+    image.src = URL.createObjectURL(file);
+  });
 }
 
 async function runLookup(rawValue) {
